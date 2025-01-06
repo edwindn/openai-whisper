@@ -67,7 +67,6 @@ class TransformerBlock(nn.Module):
         self.final_layer_norm = nn.LayerNorm(input_dim)
 
     def forward(self, x, xa=None, mask=None):
-        print(mask.dtype)
         print(x.dtype)
         print(self.self_attn_layer_norm.weight.dtype)
 
