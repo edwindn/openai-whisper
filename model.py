@@ -111,7 +111,7 @@ class TextDecoder(nn.Module):
         super().__init__()
 
         self.embed_tokens = nn.Embedding(vocab_dim, input_dim)
-        self.embed_positions = nn.Embedding(seq_len, input_dim)
+        self.embed_positions = nn.Parameter(torch.empty(seq_len, input_dim)) #nn.Embedding(seq_len, input_dim)
         self.layers = nn.ModuleList([TransformerBlock(input_dim, num_heads, cross_attention=True) for _ in range(num_blocks)])
         self.layer_norm = nn.LayerNorm(input_dim)
 
@@ -121,7 +121,7 @@ class TextDecoder(nn.Module):
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
                               # seq_len is fixed - need to pad
 
-        x = self.embed_tokens(x) + self.embed_positions(x)
+        x = self.embed_tokens(x) + self.embed_positions
         for l in self.layers:
             x = l(x, xa, mask=self.mask)
 
