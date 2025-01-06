@@ -88,7 +88,8 @@ class AudioEncoder(nn.Module):
         self.conv2 = nn.Conv1d(input_dim, input_dim, kernel_size=3, padding=1)
         self.layer_norm = nn.LayerNorm(input_dim)
 
-        self.register_buffer("embed_positions", sinusoidal_encoding(seq_len, input_dim))
+        #self.register_buffer("embed_positions", sinusoidal_encoding(seq_len, input_dim))
+        self.embed_positions = sinusoidal_encoding(seq_len, input_dim)
 
     def forward(self, x):
         x = F.gelu(self.conv1(x))
