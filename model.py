@@ -120,7 +120,8 @@ class TextDecoder(nn.Module):
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
                               # seq_len is fixed - need to pad
-
+        print(self.embed_tokens(x).shape)
+        print(self.embed_positions.shape)
         x = self.embed_tokens(x) + self.embed_positions
         for l in self.layers:
             x = l(x, xa, mask=self.mask)
