@@ -66,7 +66,11 @@ class TransformerBlock(nn.Module):
         self.fc2 = nn.Linear(4*input_dim, input_dim)
         self.final_layer_norm = nn.LayerNorm(input_dim)
 
-    def forward(self, x, xa=None, mask=None): # IMPLEMENT KV CACHE
+    def forward(self, x, xa=None, mask=None):
+        print(mask.dtype)
+        print(x.dtype)
+        print(self.self_attn_layer_norm.weight.dtype)
+
         x = x + self.self_attn(self.self_attn_layer_norm(x), mask)
 
         if self.cross_attn:
