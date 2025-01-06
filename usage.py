@@ -6,7 +6,9 @@ from transformers import PreTrainedTokenizerFast
 tokenizer = PreTrainedTokenizerFast(tokenizer_file="tokenizer.json")
 whisper = Whisper(WhisperParams())
 
-audio = load_audio('english1.mp3')
+test_filename = 'audio/english1.mp3'
+
+audio = load_audio(test_filename)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=1500, axis=1)
 out = whisper(spec.unsqueeze(0), tokens=torch.tensor([50258, 50364, 50257], dtype=torch.float32)) # using blank tokens
