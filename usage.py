@@ -17,7 +17,7 @@ spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
 tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64)
-tokens = pad_or_trim(tokens, length=params.txt_seq_len, axis=1)
+tokens = pad_or_trim(tokens, length=params.txt_seq_len, axis=0)
 tokens = F.one_hot(tokens, num_classes=params.vocab_dim) # should be batch * seq length * embedding dim
 out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
 print(out.shape)
