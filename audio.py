@@ -1,6 +1,7 @@
 import ffmpeg
 import numpy as np
 import torch
+import torch.nn.functional as F
 SAMPLE_RATE = 16000
 FFT_LENGTH = 400
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
