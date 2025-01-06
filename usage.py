@@ -5,6 +5,7 @@ from model import Whisper, WhisperParams
 from transformers import PreTrainedTokenizerFast
 tokenizer = PreTrainedTokenizerFast(tokenizer_file="tokenizer.json")
 whisper = Whisper(WhisperParams())
+whisper.float()
 
 test_filename = 'audio/english1.mp3'
 
