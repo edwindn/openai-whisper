@@ -155,6 +155,14 @@ class Whisper(nn.Module):
     def embed_audio(self, mel):
         return self.encoder(mel)
 
+    def load_weights(self, folder_path='./'):
+        weights1 = torch.load(f'{folder_path}whisper_01.bin')
+        weights2 = torch.load(f'{folder_path}whisper_02.bin')
+        weights = weights1
+        weights.update(weights2)
+        weights = {k.split('model.')[1]: v for k, v in weights.items() if k not in ['proj_out.weight', 'model.encoder.embed_positions.weight']}
+        self.load_state_dict(weights)
+        print('Successfully loaded weights')
 
 from dataclasses import dataclass
 @dataclass
@@ -173,11 +181,5 @@ class WhisperParams:
 
 
 if __name__ == '__main__':
-    weights1 = torch.load('whisper_01.bin')
-    weights2 = torch.load('whisper_02.bin')
-    weights = weights1
-    weights.update(weights2)
-    weights = {k.split('model.')[1]: v for k, v in weights.items() if k not in ['proj_out.weight', 'model.encoder.embed_positions.weight']}
-    
     whisper = Whisper(WhisperParams())
-    whisper.load_state_dict(weights)
+    whisper.load_weights()
