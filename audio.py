@@ -18,9 +18,9 @@ def load_audio(file):
 
 def pad_or_trim(audio, length, axis=-1):
     assert torch.is_tensor(audio), "Can't pad or trim a non-tensor array"
-    if audio.shape[axis] < length:
+    if audio.shape[axis] > length:
         return audio.index_select(dim=axis, index=torch.arange(length))
-    elif audio.shape[axis] > length:
+    elif audio.shape[axis] < length:
         padding = [(0, 0)] * audio.ndim
         padding[axis] = (0, length - audio.shape[axis])
         return F.pad(audio, [pad for sizes in padding[::-1] for pad in sizes])
