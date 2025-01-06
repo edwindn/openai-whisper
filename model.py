@@ -158,13 +158,13 @@ class Whisper(nn.Module):
 from dataclasses import dataclass
 @dataclass
 class WhisperParams:
-    num_mels: int = 80
+    num_mels: int = 128
     audio_input_dim: int = 1280
     audio_num_heads: int = 4
     audio_seq_len: int = 1500
     audio_num_blocks: int = 32
 
-    vocab_dim: int = 51865
+    vocab_dim: int = 51866
     txt_seq_len: int = 448
     txt_input_dim: int = 1280 # must be the same as audio embedding size
     txt_num_heads: int = 4
