@@ -11,5 +11,5 @@ test_filename = 'audio/english1.mp3'
 audio = load_audio(test_filename)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=1500, axis=1)
-out = whisper(spec.unsqueeze(0), tokens=torch.tensor([50258, 50364, 50257], dtype=torch.float32)) # using blank tokens
+out = whisper(spec.unsqueeze(0), tokens=torch.tensor([50258, 50364, 50257], dtype=torch.int64)) # using blank tokens
 print(out.shape)
