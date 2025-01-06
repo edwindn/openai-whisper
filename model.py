@@ -57,8 +57,8 @@ class TransformerBlock(nn.Module):
         self.self_attn = MHA(input_dim, num_heads)
         self.self_attn_layer_norm = nn.LayerNorm(input_dim)
 
+        self.cross_attn = cross_attention
         if cross_attention:
-            self.cross_attn = cross_attention
             self.encoder_attn = MHA(input_dim, num_heads) # should be named decoder_attn, but HF weights use encoder_attn
             self.encoder_attn_layer_norm = nn.LayerNorm(input_dim)
 
@@ -67,9 +67,7 @@ class TransformerBlock(nn.Module):
         self.final_layer_norm = nn.LayerNorm(input_dim)
 
     def forward(self, x, xa=None, mask=None):
-        x = x.float()
-        print(x.dtype)
-        print(self.self_attn_layer_norm.weight.dtype)
+        x = x.float() # check where the upstream float64 is occurring
         x = x + self.self_attn(self.self_attn_layer_norm(x), mask)
 
         if self.cross_attn:
