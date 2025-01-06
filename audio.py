@@ -1,4 +1,6 @@
 import ffmpeg
+import numpy as np
+import torch
 SAMPLE_RATE = 16000
 FFT_LENGTH = 400
 
