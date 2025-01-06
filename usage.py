@@ -1,10 +1,13 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from audio import load_audio, pad_or_trim, get_spectrogram
 from model import Whisper, WhisperParams
 from transformers import PreTrainedTokenizerFast
 tokenizer = PreTrainedTokenizerFast(tokenizer_file="tokenizer.json")
-whisper = Whisper(WhisperParams())
+
+params = WhisperParams()
+whisper = Whisper(params)
 whisper.float()
 for p in whisper.parameters():
     p.data = p.data.float()
@@ -14,5 +17,8 @@ test_filename = 'audio/english1.mp3'
 audio = load_audio(test_filename)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=1500, axis=1)
-out = whisper(spec.unsqueeze(0), tokens=torch.tensor([50258, 50364, 50257], dtype=torch.int64)) # using blank tokens
+
+tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64)
+tokens = F.one_hot(tokens, num_classes=params.vocab_dim).unsqueeze(0) # should be batch * seq length * embedding dim
+out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
 print(out.shape)
