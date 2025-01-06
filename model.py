@@ -172,10 +172,11 @@ class WhisperParams:
 
 
 if __name__ == '__main__':
-    whisper = Whisper(WhisperParams())
     weights1 = torch.load('whisper_01.bin')
     weights2 = torch.load('whisper_02.bin')
     weights = weights1
     weights.update(weights2)
-    weights = {k.split('model.')[1]: v for k, v in weights.items() if k not in ['proj_out.weight', 'encoder.embed_positions.weight']}
+    weights = {k.split('model.')[1]: v for k, v in weights.items() if k not in ['proj_out.weight', 'model.encoder.embed_positions.weight']}
+    
+    whisper = Whisper(WhisperParams())
     whisper.load_state_dict(weights)
