@@ -164,8 +164,8 @@ class Whisper(nn.Module):
         return self.encoder(mel)
 
     def load_weights(self, folder_path='./'):
-        weights1 = torch.load(f'{folder_path}whisper_01.bin')
-        weights2 = torch.load(f'{folder_path}whisper_02.bin')
+        weights1 = torch.load(f'{folder_path}whisper_01.bin', weights_only=True)
+        weights2 = torch.load(f'{folder_path}whisper_02.bin', weights_only=True)
         weights = weights1
         weights.update(weights2)
         #decoder_embed_weight = weights['model.decoder.embed_positions.weight']
