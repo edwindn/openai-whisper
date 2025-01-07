@@ -17,5 +17,12 @@ spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
 tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64).unsqueeze(0)
-out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
-print(out.shape)
+
+while True:
+  out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
+  next_token = out.squeeze().argmax()
+  tokens = torch.cat((tokens, next_token.to(tokens.dtype)), dim=0)
+  tokens_list = tokens.cpu().tolist()
+  print(f'tokens: {tokens_list}')
+  print(f'text: {tokenizer.decode(tokens_list)}')
+  print('\n')
