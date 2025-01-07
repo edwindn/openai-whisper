@@ -33,10 +33,13 @@ class MHA(nn.Module): ### implement kv_cache for speeding up cross attention in 
         q = self.q_proj(x)
 
         batch, seq_len, _ = x.size()
-        print(f'mha: {x.shape}')
+
         if xa is not None:
-            print(f'mha: {xa.shape}')
-        seq_len_kv = seq_len if xa is None else xa.shape[1]
+            _, seq_len_kv, _ = xa.size()
+        else:
+            seq_len_kv = seq_len
+        #seq_len_kv = seq_len if xa is None else xa.shape[1]
+        print(f'seq len kv: {seq_len_kv}')
         q = q.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3) # batch, heads, sequence len, embedding
 
         if kv_cache is None:
