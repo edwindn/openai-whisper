@@ -119,11 +119,7 @@ class TextDecoder(nn.Module):
         self.register_buffer("mask", mask, persistent=False)
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
-                              # seq_len is fixed - need to pad
-        print(x.shape)
-        print(self.embed_tokens(x).shape)
-        print(self.embed_positions[:x.shape[1]].shape)
-        x = self.embed_tokens(x) + self.embed_positions[:x.shape[1]]
+        x = self.embed_tokens(x) + self.embed_positions[:x.shape[1]].unsqueeze(0) # should automatically broadcast
         for l in self.layers:
             x = l(x, xa, mask=self.mask)
 
