@@ -169,10 +169,10 @@ class Whisper(nn.Module):
         weights = weights1
         weights.update(weights2)
         #decoder_embed_weight = weights['model.decoder.embed_positions.weight']
-        decoder_embed_weight = weights.pop('model.decoder.embed_positions', None) #.weight?
+        decoder_embed_weight = weights.pop('model.decoder.embed_positions.weight', None) #.weight?
         weights = {k.split('model.')[1]: v for k, v in weights.items() if k not in ['proj_out.weight', 'model.encoder.embed_positions.weight']}
         with torch.no_grad():
-            self.load_state_dict(weights)
+            self.load_state_dict(weights, strict=False)
             self.decoder.embed_positions.copy_(decoder_embed_weight)
         print('Successfully loaded weights')
 
