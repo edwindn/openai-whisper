@@ -8,6 +8,7 @@ tokenizer = PreTrainedTokenizerFast(tokenizer_file="tokenizer.json")
 
 params = WhisperParams()
 whisper = Whisper(params)
+whisper.load_weights()
 whisper.float()
 
 test_filename = 'audio/english1.mp3'
