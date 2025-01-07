@@ -45,6 +45,11 @@ class MHA(nn.Module): ### implement kv_cache for speeding up cross attention in 
         k = k.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3)
         v = v.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3)
 
+        if mask is not None:
+            out_seq_len = x.shape[1]
+            print(f'mask: {mask.shape}')
+            mask = mask[:out_seq_len, :out_seq_len]
+            print(mask.shape)
         value = scaled_dot_product_attention(q, k, v, mask)
         value = value.permute(0, 2, 1, 3).reshape(batch, seq_len, -1)
         return self.out_proj(value)
