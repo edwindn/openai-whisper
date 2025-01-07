@@ -71,11 +71,11 @@ class TransformerBlock(nn.Module):
         if xa is not None:
             print(f'block xa: {xa.shape}')
         x = x.float() # check where the upstream float64 is occurring
-        x = x + self.self_attn(self.self_attn_layer_norm(x), mask)
+        x = x + self.self_attn(self.self_attn_layer_norm(x), mask=mask)
 
         if self.cross_attn:
             assert xa is not None, "Audio encoding missing from cross-attention"
-            x = x + self.encoder_attn(self.encoder_attn_layer_norm(x), xa, mask)
+            x = x + self.encoder_attn(self.encoder_attn_layer_norm(x), xa, mask=mask)
 
         x = self.final_layer_norm(x)
         x = x + self.fc2(F.gelu(self.fc1(x)))
