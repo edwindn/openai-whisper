@@ -23,13 +23,10 @@ tokens = torch.tensor([sot_token, nts_token], dtype=torch.int64)
 
 while True:
   out = whisper(spec.unsqueeze(0), tokens.unsqueeze(0))
-  print(out.shape)
   next_token = out.squeeze().argmax()
   print(f'next token: {next_token}')
   if next_token == eot_token:
     break
-  print(torch.tensor([next_token], dtype=tokens.dtype))
-  print(tokens)
   tokens = torch.cat((tokens, torch.tensor([next_token], dtype=tokens.dtype)), dim=0)
   tokens_list = tokens.cpu().tolist()
   print(f'text: {tokenizer.decode(tokens_list)}')
