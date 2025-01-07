@@ -132,7 +132,7 @@ class TextDecoder(nn.Module):
         x = self.layer_norm(x) # same shape as positional embedding
         print(x.shape)
         logits = x @ torch.transpose(self.embed_tokens.weight.to(x.dtype), 0, 1) # input_dim -> vocab_dim
-        return logits
+        return logits[:,-1,:] # get last token
 
 
 class Whisper(nn.Module):
