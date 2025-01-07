@@ -2,10 +2,32 @@ import ffmpeg
 import numpy as np
 import torch
 import torch.nn.functional as F
+from subprocess import CalledProcessError, run
 SAMPLE_RATE = 16000
 FFT_LENGTH = 400
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+def load_audio(file, sr=SAMPLE_RATE):
+    cmd = [
+        "ffmpeg",
+        "-nostdin",
+        "-threads", "0",
+        "-i", file,
+        "-f", "s16le",
+        "-ac", "1",
+        "-acodec", "pcm_s16le",
+        "-ar", str(sr),
+        "-"
+    ]
+
+    try:
+        out = run(cmd, capture_output=True, check=True).stdout
+    except CalledProcessError as e:
+        raise RuntimeError(f"Failed to load audio: {e.stderr.decode()}") from e
+
+    return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
+    
+"""
 def load_audio(file):
     try:
             out, _ = (
@@ -19,7 +41,7 @@ def load_audio(file):
         print(f"Error while reading audio file {file}: {e.stderr}")
         return None
     return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
-
+"""
 
 def pad_or_trim(audio, length, axis=-1):
     assert torch.is_tensor(audio), "Can't pad or trim a non-tensor array"
