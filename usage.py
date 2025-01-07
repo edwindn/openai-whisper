@@ -13,8 +13,8 @@ whisper.float()
 
 test_filename = 'audio/english1.mp3'
 
-audio = load_audio(test_filename, params.num_mels)
-spec = get_spectrogram(torch.tensor(audio))
+audio = load_audio(test_filename)
+spec = get_spectrogram(torch.tensor(audio), params.num_mels)
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
 sot_token = 50258 # <|startoftranscript|>
