@@ -34,11 +34,7 @@ class MHA(nn.Module): ### implement kv_cache for speeding up cross attention in 
 
         batch, seq_len, _ = x.size()
 
-        if xa is not None:
-            _, seq_len_kv, _ = xa.size()
-        else:
-            seq_len_kv = seq_len
-        #seq_len_kv = seq_len if xa is None else xa.shape[1]
+        seq_len_kv = seq_len if xa is None else xa.shape[1]
         print(f'seq len kv: {seq_len_kv}')
         q = q.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3) # batch, heads, sequence len, embedding
 
@@ -120,7 +116,7 @@ class AudioEncoder(nn.Module):
 
 
 class TextDecoder(nn.Module):
-    def __init__(self, vocab_dim, seq_len, input_dim, num_heads, num_blocks):
+    def __init__(self, vocab_dim, seq_len, input_dim, num_heads, num_blocks, audio_seq_len):
         super().__init__()
 
         self.embed_tokens = nn.Embedding(vocab_dim, input_dim)
@@ -128,7 +124,7 @@ class TextDecoder(nn.Module):
         self.layers = nn.ModuleList([TransformerBlock(input_dim, num_heads, cross_attention=True) for _ in range(num_blocks)])
         self.layer_norm = nn.LayerNorm(input_dim)
 
-        mask = torch.empty(seq_len, seq_len).fill_(-np.inf).triu_(1)
+        mask = torch.empty(seq_len, audio_seq_len).fill_(-np.inf).triu_(1)
         self.register_buffer("mask", mask, persistent=False)
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
@@ -160,7 +156,8 @@ class Whisper(nn.Module):
             params.txt_seq_len,
             params.txt_input_dim,
             params.txt_num_heads,
-            params.txt_num_blocks
+            params.txt_num_blocks,
+            params.audio_seq_len
         )
 
     def forward(self, mel, tokens): # takes in existing output text tokens
