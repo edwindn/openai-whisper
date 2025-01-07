@@ -23,7 +23,7 @@ while True:
   print(out.shape)
   next_token = out.squeeze().argmax()
   print(f'next token: {next_token}')
-  tokens = torch.cat((tokens, next_token.to(tokens.dtype)), dim=0)
+  tokens = torch.cat((tokens, torch.tensor(next_token, dtype=tokens.dtype)), dim=0)
   tokens_list = tokens.cpu().tolist()
   print(f'text: {tokenizer.decode(tokens_list)}')
   print('\n')
