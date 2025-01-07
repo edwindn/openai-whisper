@@ -10,7 +10,8 @@ def load_audio(file):
     try:
             out, _ = (
                 ffmpeg
-                .input(file)
+                #.input(file)
+                .input(file, threads=0, loglevel="quiet", ar=SAMPLE_RATE)
                 .output('pipe:', format='wav')
                 .run(capture_stdout=True, capture_stderr=True)
             )
@@ -43,7 +44,7 @@ def get_spectrogram(audio, num_mels):
     filters = mel_filters(num_mels)
     spectrogram = filters @ amplitues
     log_spectrogram = torch.clamp(spectrogram, 1e-10).log10()
-    log_spectrogram = torch.maximum(log_spectrogram, log_spectrogram.max() - 8)
-    log_spectrogram = (log_spectrogram + 4.) / 4.
+    #log_spectrogram = torch.maximum(log_spectrogram, log_spectrogram.max() - 8)
+    #log_spectrogram = (log_spectrogram + 4.) / 4.
     return log_spectrogram 
     
