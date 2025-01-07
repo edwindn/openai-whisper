@@ -123,11 +123,14 @@ class TextDecoder(nn.Module):
         self.register_buffer("mask", mask, persistent=False)
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
+        print(x.shape)
+        print(xa.shape)
         x = self.embed_tokens(x) + self.embed_positions[:x.shape[1]].unsqueeze(0) # should automatically broadcast
         for l in self.layers:
             x = l(x, xa, mask=self.mask)
 
         x = self.layer_norm(x) # same shape as positional embedding
+        print(x.shape)
         logits = x @ torch.transpose(self.embed_tokens.weight.to(x.dtype), 0, 1) # input_dim -> vocab_dim
         return logits
 
