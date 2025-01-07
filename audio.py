@@ -29,7 +29,7 @@ def pad_or_trim(audio, length, axis=-1):
         padding[axis] = (0, length - audio.shape[axis])
         return F.pad(audio, [pad for sizes in padding[::-1] for pad in sizes])
 
-def mel_filters(num_mels=80, file = 'mel_filters.npz'):
+def mel_filters(num_mels, file = 'mel_filters.npz'):
     with np.load(file, allow_pickle=False) as f:
         return torch.from_numpy(f[f"mel_{num_mels}"]).to(device)
 
