@@ -33,14 +33,14 @@ def mel_filters(num_mels, file = 'mel_filters.npz'):
     with np.load(file, allow_pickle=False) as f:
         return torch.from_numpy(f[f"mel_{num_mels}"]).to(device)
 
-def get_spectrogram(audio):
+def get_spectrogram(audio, num_mels):
     hop_time = 10e-3
     hop = int(SAMPLE_RATE * hop_time)
     window = torch.hann_window(FFT_LENGTH).to(device)
     ft_audio = torch.stft(audio, FFT_LENGTH, hop, window=window, return_complex=True)
     amplitues = ft_audio[...,:-1].abs()**2 # ?
 
-    filters = mel_filters()
+    filters = mel_filters(num_mels)
     spectrogram = filters @ amplitues
     log_spectrogram = torch.clamp(spectrogram, 1e-10).log10()
     log_spectrogram = torch.maximum(log_spectrogram, log_spectrogram.max() - 8)
