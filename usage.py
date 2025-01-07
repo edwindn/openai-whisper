@@ -16,13 +16,18 @@ audio = load_audio(test_filename)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
-tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64).unsqueeze(0)
+sot_token = 50258 # <|startoftranscript|>
+nts_token = 50364 # <|notimestamps|>
+eot_token = 50257 # <|endoftext|>
+tokens = torch.tensor([sot_token, nts_token], dtype=torch.int64).unsqueeze(0)
 
 while True:
   out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
   print(out.shape)
   next_token = out.squeeze().argmax()
   print(f'next token: {next_token}')
+  if next_token == eot_token:
+    break
   tokens = torch.cat((tokens, torch.tensor(next_token, dtype=tokens.dtype)), dim=0)
   tokens_list = tokens.cpu().tolist()
   print(f'text: {tokenizer.decode(tokens_list)}')
