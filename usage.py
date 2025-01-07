@@ -28,7 +28,7 @@ while True:
   print(f'next token: {next_token}')
   if next_token == eot_token:
     break
-  tokens = torch.cat((tokens, torch.tensor(next_token, dtype=tokens.dtype)), dim=0)
+  tokens = torch.cat((tokens, torch.tensor([next_token], dtype=tokens.dtype)), dim=0)
   tokens_list = tokens.cpu().tolist()
   print(f'text: {tokenizer.decode(tokens_list)}')
   print('\n')
