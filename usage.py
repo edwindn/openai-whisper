@@ -19,10 +19,10 @@ spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 sot_token = 50258 # <|startoftranscript|>
 nts_token = 50364 # <|notimestamps|>
 eot_token = 50257 # <|endoftext|>
-tokens = torch.tensor([sot_token, nts_token], dtype=torch.int64).unsqueeze(0)
+tokens = torch.tensor([sot_token, nts_token], dtype=torch.int64)
 
 while True:
-  out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
+  out = whisper(spec.unsqueeze(0), tokens.unsqueeze(0))
   print(out.shape)
   next_token = out.squeeze().argmax()
   print(f'next token: {next_token}')
