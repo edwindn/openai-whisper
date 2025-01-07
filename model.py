@@ -42,6 +42,8 @@ class MHA(nn.Module): ### implement kv_cache for speeding up cross attention in 
             k = kv_cache[self.k_proj]
             v = kv_cache[self.v_proj]
 
+        if xa is not None:
+            seq_len = xa.shape[1]
         k = k.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3)
         v = v.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3)
 
