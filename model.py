@@ -36,9 +36,6 @@ class MHA(nn.Module): ### implement kv_cache for speeding up cross attention in 
         q = q.view(batch, seq_len, self.num_heads, -1).permute(0, 2, 1, 3) # batch, heads, sequence len, embedding
 
         if kv_cache is None:
-            print(f'xa: {xa.shape}' if xa is not None else x.shape)
-            print(self.k_proj.weight.shape)
-            print('\n')
             k = self.k_proj(x if xa is None else xa)
             v = self.v_proj(x if xa is None else xa)
         else:
@@ -96,6 +93,7 @@ class AudioEncoder(nn.Module):
         self.embed_positions = sinusoidal_encoding(seq_len, input_dim)
 
     def forward(self, x):
+        print(f'encoder input: {x.shape}')
         x = F.gelu(self.conv1(x))
         x = F.gelu(self.conv2(x))
         x = x.permute(0, 2, 1) # batch size, sequence length, input dim
@@ -106,6 +104,7 @@ class AudioEncoder(nn.Module):
             x = l(x)
 
         x = self.layer_norm(x)
+        print(f'encoder output: {x.shape}')
         return x
 
 
@@ -123,6 +122,7 @@ class TextDecoder(nn.Module):
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
         x = self.embed_tokens(x) + self.embed_positions[:x.shape[1]].unsqueeze(0) # should automatically broadcast
+        print(f'decoder input xa: {xa.shape}')
         for l in self.layers:
             x = l(x, xa, mask=self.mask)
 
