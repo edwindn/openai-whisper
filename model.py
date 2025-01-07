@@ -67,6 +67,9 @@ class TransformerBlock(nn.Module):
         self.final_layer_norm = nn.LayerNorm(input_dim)
 
     def forward(self, x, xa=None, mask=None):
+        print(f'block x: {x.shape}')
+        if xa is not None:
+            print(f'block xa: {xa.shape}')
         x = x.float() # check where the upstream float64 is occurring
         x = x + self.self_attn(self.self_attn_layer_norm(x), mask)
 
@@ -93,7 +96,6 @@ class AudioEncoder(nn.Module):
         self.embed_positions = sinusoidal_encoding(seq_len, input_dim)
 
     def forward(self, x):
-        print(f'encoder input: {x.shape}')
         x = F.gelu(self.conv1(x))
         x = F.gelu(self.conv2(x))
         x = x.permute(0, 2, 1) # batch size, sequence length, input dim
@@ -104,7 +106,6 @@ class AudioEncoder(nn.Module):
             x = l(x)
 
         x = self.layer_norm(x)
-        print(f'encoder output: {x.shape}')
         return x
 
 
@@ -122,8 +123,9 @@ class TextDecoder(nn.Module):
 
     def forward(self, x, xa): # xa is the audio encoding, x are the existing output text tokens
         x = self.embed_tokens(x) + self.embed_positions[:x.shape[1]].unsqueeze(0) # should automatically broadcast
-        print(f'decoder input xa: {xa.shape}')
         for l in self.layers:
+            print(f'decoder x: {x.shape}')
+            print(f'decoder xa: {xa.shape}')
             x = l(x, xa, mask=self.mask)
 
         x = self.layer_norm(x) # same shape as positional embedding
