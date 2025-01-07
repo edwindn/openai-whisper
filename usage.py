@@ -16,10 +16,6 @@ audio = load_audio(test_filename)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
-tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64)
-
-print('padded model inputs')
-tokens = F.one_hot(tokens, num_classes=params.vocab_dim).unsqueeze(0) # should be batch * seq length * embedding dim
-print('one hot encoded inputs')
+tokens = torch.tensor([50258, 50364, 50257], dtype=torch.int64).unsqueeze(0)
 out = whisper(spec.unsqueeze(0), tokens) # using blank tokens
 print(out.shape)
