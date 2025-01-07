@@ -13,7 +13,7 @@ whisper.float()
 
 test_filename = 'audio/english1.mp3'
 
-audio = load_audio(test_filename)
+audio = load_audio(test_filename, params.num_mels)
 spec = get_spectrogram(torch.tensor(audio))
 spec = pad_or_trim(spec, length=params.audio_seq_len, axis=1)
 
